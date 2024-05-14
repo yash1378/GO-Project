@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* width:100vw; */
+        }
+
+        #loginForm {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:active {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <form id="loginForm">
+            <h2>User Authentication</h2>
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+            <button type="submit">SignIn</button>
+            <button id="googleSignInBtn">Sign in with Google</button> 
+            <button id="LogInBtn">Login</button> 
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the values entered by the user
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // Send the credentials to the server for authentication
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Successful authentication
+                } else {
+                    throw new Error("Authentication failed");
+                }
+            })
+            .then(data => {
+                // Handle the token from the server response
+                console.log("Received token:", data.token);
+
+                // Redirect the user to the dashboard or some other page
+                window.location.href = "/";
+            })
+            .catch(error => {
+                console.error("Authentication failed:", error);
+                // Display an error message to the user
+                alert("Authentication failed. Please check your credentials and try again.");
+            });
+        });
+        document.getElementById("googleSignInBtn").addEventListener("click", function() {
+            // Redirect the user to the Google sign-in page
+            window.location.href = "/auth/google"; // Change the route accordingly
+        });
+        document.getElementById("LogInBtn").addEventListener("click", function() {
+            // Redirect the user to the Google sign-in page
+            window.location.href = "/login"; // Change the route accordingly
+        });
+    </script>
+</body>
+</html>
